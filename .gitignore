@@ -1,5 +1,8 @@
 dataset/
-result/
+dataset*/
+result_k_18/
+result_k_*/
+result_k_355/
 .idea/
 *log.txt
 

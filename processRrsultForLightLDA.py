@@ -2,6 +2,7 @@ import numpy as np
 
 
 class LDAResult(object):
+
     def __init__(self, alpha, beta, topic_num, vocab_num, doc_num):
         # 每篇文档词（主题）出现的次数
         self._doc_cnts = []
@@ -37,6 +38,7 @@ class LDAResult(object):
         for i in range(self._doc_num):
             for j in range(self._topic_num):
                 self._doc_topic_mat[i][j] = (self._doc_topic_mat[i][j] + self._alpha) / (self._doc_cnts[i] + factor)
+        return self._doc_topic_mat
 
     def LoadWordTopicModel(self, model_path, summary_path):
         f = open(model_path, 'r')
@@ -90,7 +92,7 @@ class LDAResult(object):
     def dumpTopicWord(self, vocab_path, output_path):
         word_list = self.getVocabList(vocab_path)
         topic_nWordList = self.getTopicTopWordN(100)
-        #topic_nWordList =[[1,2,3],[3,2,1],[50,7,99],[4,55,77]]
+        # topic_nWordList =[[1,2,3],[3,2,1],[50,7,99],[4,55,77]]
         print("writing....")
         f = open(output_path, 'a')
         for i in range(len(topic_nWordList)):
@@ -103,14 +105,15 @@ class LDAResult(object):
 
 
 if __name__ == '__main__':
-    doc_topic_path = "./result/doc_topic.0"
-    topic_word_path = "./result/server_0_table_0.model"
-    topic_summary = "./result/server_0_table_1.model"
-    ori_word_path = "./result/vocab.sougou.txt"
-    output = "./result/res_100.txt"
-    ldaResult = LDAResult(0.1, 0.01, 1000, 822343, 1288823)
-    # ldaResult.LoadDocTopicModel(doc_topic_path)
-    print("Loading DocTopic finished!")
-    ldaResult.LoadWordTopicModel(topic_word_path, topic_summary)
-    print("Loading WordTopic finished!")
-    ldaResult.dumpTopicWord(ori_word_path, output)
+    doc_topic_path = "./result_k_355/doc_topic.0"
+    topic_word_path = "./result_k_355/server_0_table_0.model"
+    topic_summary = "./result_k_355/server_0_table_1.model"
+    ori_word_path = "result_k_355/vocab.sougou.txt"
+    output = "./result_k_355/res_100.txt"
+    ldaResult = LDAResult(0.1, 0.01, 378, 822343, 1288823)
+    ldaResult.LoadDocTopicModel(doc_topic_path)
+
+    # print("Loading DocTopic finished!")
+    # ldaResult.LoadWordTopicModel(topic_word_path, topic_summary)
+    # print("Loading WordTopic finished!")
+    # ldaResult.dumpTopicWord(ori_word_path, output)
