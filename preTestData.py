@@ -4,16 +4,13 @@ Time:2021
 本文件将输入的文件转化成libsvm文件的形式得到XXXX.libsvm和一个词典文件
 '''
 import jieba.posseg as psg
-from config import NOT_USE_fLAG
+from config import NOT_USE_fLAG, LightLdaBinPath, BinaryOutPath, TopicK, VocabNum, DocNum, TestDocWordLibsvmPath, \
+    TestDatapath, TestVocabLibsvmPath, TrainVocabPath
 import os
 import numpy as np
 
 from processRrsultForLightLDA import LDAResult
 
-data_path = "./new_text.txt"
-
-out_path_docWord = "./test_Out/docword.libsvm"
-out_path_vocab = "./test_Out/vocab.word_id.dict"
 
 word_list = []
 # key:count count is in all doc
@@ -49,7 +46,7 @@ def write_docWord(docIndex, wordDict):
     :param wordDict: 文章词典词频统计
     :return:
     """
-    f_docWord = open(out_path_docWord, "a+")
+    f_docWord = open(TestDocWordLibsvmPath, "a+")
     doc = str(docIndex) + '\t'
     for key in wordDict.keys():
         doc += str(word_list.index(key)) + ':' + str(wordDict[key]) + ' '
@@ -63,7 +60,7 @@ def write_vocab(wordDict):
     :param wordList:
     :return:
     '''
-    f_vocab = open(out_path_vocab, "w")
+    f_vocab = open(TestVocabLibsvmPath, "w")
     for key in wordDict:
         line = '\t'.join([str(word_list.index(key)), key, str(wordDict[key])]) + "\n"
         f_vocab.write(line)
@@ -86,8 +83,8 @@ def read_dict(dict_path):
 
 def transforLIBSVM():
     # 获取全局词典
-    read_dict("./dataset/vocab.sougou.txt")
-    with open(data_path) as f:
+    read_dict(TrainVocabPath)
+    with open(TestDatapath) as f:
         # 文章的数目,从1开始计数
         doc_index = 0
         read_data = f.readline().strip()
@@ -101,29 +98,29 @@ def transforLIBSVM():
                 statistics_to_dict(token_list)
                 # 写入文件docWord
                 write_docWord(doc_index, doc_word_dict)
-            doc_index += 1
+                doc_index += 1
             doc_word_dict.clear()
             read_data = f.readline().strip()
         f.close()
 
-    print(doc_index)
+    print(doc_index-1)
     print(len(word_list))
     write_vocab(word_dict)
-
+    return doc_index-1
 
 def libsvmTOBinary(exePath, outdir, numblocks=0):
     a = os.system('{dumpBinaryPath} {libsvmPath}   {libsvmVocabPath} {outDir} {blockNum}'.format(dumpBinaryPath=exePath,
-                                                                                                 libsvmPath=out_path_docWord,
+                                                                                                 libsvmPath=TestDocWordLibsvmPath,
                                                                                                  libsvmVocabPath='./dataset/sougou.word_id.dict',
                                                                                                  outDir=outdir,
                                                                                                  blockNum=numblocks))
     return a
 
 
-def inferByLightLDA(infer_path, block_path):
+def inferByLightLDA(infer_path, block_path, topic_num=378):
     a = os.system(
-        '{inferPath}  -num_vocabs 822343  -num_topics 378 -num_iterations 100 -alpha 0.1 -beta 0.01 -mh_steps 2 -num_local_workers 1 -num_blocks 1 -max_num_document 1300000 -input_dir {blockPath}  -data_capacity 8000'.format(
-            inferPath=infer_path, blockPath=block_path))
+        '{inferPath}  -num_vocabs 822343  -num_topics {K} -num_iterations 100 -alpha 0.1 -beta 0.01 -mh_steps 2 -num_local_workers 1 -num_blocks 1 -max_num_document 1300000 -input_dir {blockPath}  -data_capacity 8000'.format(
+            inferPath=infer_path, blockPath=block_path, K=topic_num))
     return a
 
 def getTop5(outputs):
@@ -135,15 +132,14 @@ def getTop5(outputs):
     return res
 
 if __name__ == '__main__':
+
     # 将输入转成libsvm格式
-    # transforLIBSVM()
-    # # 转成lightLDA的block结构
-    # lightldaBinPath = '/home/yxb/MyCoding/LightLDA/bin/'
-    # binaryOutPath = "/home/yxb/MyCoding/LightLDA/example/data/text_data/"
-    # libsvmTOBinary(lightldaBinPath + 'dump_binary', binaryOutPath)
-    # # 推理
-    # inferByLightLDA(lightldaBinPath + "infer", binaryOutPath)
+    docNum = transforLIBSVM()
+    # libsvm转成LightLDA 的block
+    libsvmTOBinary(LightLdaBinPath + 'dump_binary', BinaryOutPath)
+    # 推理
+    inferByLightLDA(LightLdaBinPath + "infer", BinaryOutPath, TopicK)
     doc_topic_path = "./doc_topic.0"
-    ldaResult = LDAResult(0.1, 0.01, 378, 822343, 6)
+    ldaResult = LDAResult(0.1, 0.01, TopicK, VocabNum, docNum)
     result = ldaResult.LoadDocTopicModel(doc_topic_path)
     print(getTop5(result))
