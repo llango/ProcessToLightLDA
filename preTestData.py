@@ -4,13 +4,12 @@ Time:2021
 本文件将输入的文件转化成libsvm文件的形式得到XXXX.libsvm和一个词典文件
 '''
 import jieba.posseg as psg
-from config import NOT_USE_fLAG, LightLdaBinPath, BinaryOutPath, TopicK, VocabNum,  TestDocWordLibsvmPath, \
+from config import NOT_USE_fLAG, LightLdaBinPath, BinaryOutPath, TopicK, TestDocWordLibsvmPath, \
     TestDatapath, TestVocabLibsvmPath, TrainVocabPath
 import os
 import numpy as np
 
 from processRrsultForLightLDA import LDAResult
-
 
 word_list = []
 # key:count count is in all doc
@@ -105,7 +104,8 @@ def transforLIBSVM():
 
     print(len(word_list))
     write_vocab(word_dict)
-    return doc_index
+    return doc_index, len(word_list)
+
 
 def libsvmTOBinary(exePath, outdir, numblocks=0):
     a = os.system('{dumpBinaryPath} {libsvmPath}   {libsvmVocabPath} {outDir} {blockNum}'.format(dumpBinaryPath=exePath,
@@ -122,6 +122,7 @@ def inferByLightLDA(infer_path, block_path, topic_num=378):
             inferPath=infer_path, blockPath=block_path, K=topic_num, num_vocabs=VocabNum))
     return a
 
+
 def getTop5(outputs):
     outputs = np.argsort(outputs).tolist()
     # 取后面五个最大的类别
@@ -130,10 +131,10 @@ def getTop5(outputs):
     res = [l[::-1] for l in res]
     return res
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     # 将输入转成libsvm格式
-    docNum = transforLIBSVM()
+    docNum, VocabNum = transforLIBSVM()
     # libsvm转成LightLDA 的block
     libsvmTOBinary(LightLdaBinPath + 'dump_binary', BinaryOutPath)
     # 推理

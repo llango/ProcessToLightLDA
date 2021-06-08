@@ -16,5 +16,4 @@ LightLdaBinPath = './lightLDABin/'
 TrainVocabPath = "./dataset/vocab.sougou.txt"
 # super parameters
 TopicK = 378
-VocabNum = 822343
 
