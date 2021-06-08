@@ -7,7 +7,7 @@ TestDatapath = "./new_text.txt"
 TestDocWordLibsvmPath = "./test_Out/docword.libsvm"
 TestVocabLibsvmPath = "./test_Out/vocab.word_id.dict"
 # 训练好的模型文件以及dump_binary(LightLDA Block) out path
-BinaryOutPath = "/home/yxb/MyCoding/LightLDA/example/data/text_data/"
+BinaryOutPath = "./model_block_path"
 
 
 # LightLDA BIN Files PATH
