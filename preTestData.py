@@ -110,7 +110,7 @@ def transforLIBSVM():
 def libsvmTOBinary(exePath, outdir, numblocks=0):
     a = os.system('{dumpBinaryPath} {libsvmPath}   {libsvmVocabPath} {outDir} {blockNum}'.format(dumpBinaryPath=exePath,
                                                                                                  libsvmPath=TestDocWordLibsvmPath,
-                                                                                                 libsvmVocabPath='./dataset/sougou.word_id.dict',
+                                                                                                 libsvmVocabPath='./docs/sougou.word_id.dict',
                                                                                                  outDir=outdir,
                                                                                                  blockNum=numblocks))
     return a

@@ -89,9 +89,9 @@ class LDAResult(object):
         f.close()
         return word_list
 
-    def dumpTopicWord(self, vocab_path, output_path):
+    def dumpTopicWord(self, vocab_path, output_path,topNum):
         word_list = self.getVocabList(vocab_path)
-        topic_nWordList = self.getTopicTopWordN(100)
+        topic_nWordList = self.getTopicTopWordN(topNum)
         # topic_nWordList =[[1,2,3],[3,2,1],[50,7,99],[4,55,77]]
         print("writing....")
         f = open(output_path, 'a')
@@ -105,15 +105,16 @@ class LDAResult(object):
 
 
 if __name__ == '__main__':
-    doc_topic_path = "./result_k_355/doc_topic.0"
-    topic_word_path = "./result_k_355/server_0_table_0.model"
-    topic_summary = "./result_k_355/server_0_table_1.model"
-    ori_word_path = "result_k_355/vocab.sougou.txt"
-    output = "./result_k_355/res_100.txt"
-    ldaResult = LDAResult(0.1, 0.01, 378, 822343, 1288823)
-    ldaResult.LoadDocTopicModel(doc_topic_path)
+    doc_topic_path = "millitaryNesResult/result_K_4_Less/doc_topic.0"
+    topic_word_path = "millitaryNesResult/result_K_4_Less/server_0_table_0.model"
+    topic_summary = "millitaryNesResult/result_K_4_Less/server_0_table_1.model"
+    ori_word_path = "./dataset/vocab.military.txt"
+    output = "millitaryNesResult/result_K_4_Less/res_100.txt"
+    ldaResult = LDAResult(0.1, 0.01, 4, 4339, 1140)
+    # ldaResult.LoadDocTopicModel(doc_topic_path)
 
-    # print("Loading DocTopic finished!")
-    # ldaResult.LoadWordTopicModel(topic_word_path, topic_summary)
-    # print("Loading WordTopic finished!")
-    # ldaResult.dumpTopicWord(ori_word_path, output)
+    print("Loading DocTopic finished!")
+    ldaResult.LoadWordTopicModel(topic_word_path, topic_summary)
+    print("Loading WordTopic finished!")
+    TopNum =100
+    ldaResult.dumpTopicWord(ori_word_path, output, TopNum)
