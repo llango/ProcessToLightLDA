@@ -1,5 +1,8 @@
 # 根据词性筛选词
 NOT_USE_fLAG = ['x', 'uj', 'd', 'ul', 'w', 'p', 'q', 'c', 'r', 'k', 'm', 'y', 'un', 't']
+# 去除标签
+WORD_LABEL = ["战略态势 外交舆论", "战略态势 政治", "战略态势 军事科技", "战略态势 经济金融"]
+
 
 # Test Doc Path
 TestDatapath = "./new_text.txt"

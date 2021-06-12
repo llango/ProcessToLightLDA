@@ -105,12 +105,12 @@ class LDAResult(object):
 
 
 if __name__ == '__main__':
-    doc_topic_path = "millitaryNesResult/result_K_4_Less/doc_topic.0"
-    topic_word_path = "millitaryNesResult/result_K_4_Less/server_0_table_0.model"
-    topic_summary = "millitaryNesResult/result_K_4_Less/server_0_table_1.model"
+    doc_topic_path = "millitaryNesResult/result_K_20_New2/doc_topic.0"
+    topic_word_path = "millitaryNesResult/result_K_20_New2/server_0_table_0.model"
+    topic_summary = "millitaryNesResult/result_K_20_New2/server_0_table_1.model"
     ori_word_path = "./dataset/vocab.military.txt"
-    output = "millitaryNesResult/result_K_4_Less/res_100.txt"
-    ldaResult = LDAResult(0.1, 0.01, 4, 4339, 1140)
+    output = "millitaryNesResult/result_K_20_New2/res_100.txt"
+    ldaResult = LDAResult(0.1, 0.01, 20, 4297, 1141)
     # ldaResult.LoadDocTopicModel(doc_topic_path)
 
     print("Loading DocTopic finished!")

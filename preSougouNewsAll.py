@@ -1,11 +1,12 @@
 import jieba.posseg as psg
 import re
-from config import NOT_USE_fLAG
+from config import NOT_USE_fLAG, WORD_LABEL
 import copy
 
 data_path = "./dataset/military_news.txt"
 out_path_docWord = "./dataset/docword.military.txt"
 out_path_vocab = "./dataset/vocab.military.txt"
+StopWordsPath = "./docs/stopWords"
 
 title_pattern = re.compile("<contenttitle>(.*)</contenttitle>")
 context_pattern = re.compile("<content>(.*)</content>")
@@ -15,14 +16,23 @@ Word_Dict = {}
 Word_List = []
 # 存放doc的word key:word value:word count in doc
 Doc_Word_Dict = {}
-# 存放所有文章的dco_dict
+# 存放所有文章的doc_dict
 Doc_Dict_List = []
 
+def read_stopWords(stopWordsPath=StopWordsPath):
+    f = open(stopWordsPath)
+    stop_list = []
+    line = f.readline().strip()
+    while line:
+        stop_list.append(line)
+        line = f.readline().strip()
+    f.close()
+    return stop_list
 
 def statistics_to_dict(wordList):
     for word in wordList:
         # 过滤掉单个字
-        if len(word) >= 1:
+        if len(word) > 1:
             # 文章字典
             word_count = wordList.count(word)
             # 全局的字典
@@ -114,15 +124,21 @@ def preSoGouNews():
 
 
 def preMillitaryNews():
+    stopWordsList = read_stopWords(StopWordsPath)
     with open(data_path) as f:
         # 文章的数目
         doc_index = 1
         read_data = f.readline()
         while read_data:
+            # 去掉文章头部标签
+            for label in WORD_LABEL:
+                if read_data.count(label):
+                    read_data = read_data.replace(label, " ")
             if len(read_data):
                 word_list = list(psg.cut(read_data))
                 # 筛选出有用的词性的词语
                 word_list = [x.word for x in word_list if x.flag not in NOT_USE_fLAG]
+                word_list = [word for word in word_list if word not in stopWordsList]
                 statistics_to_dict(word_list)
                 # write_docWord(doc_index, doc_word_dict)
                 tmp = copy.deepcopy(Doc_Word_Dict)

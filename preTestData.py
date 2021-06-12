@@ -8,7 +8,7 @@ from config import NOT_USE_fLAG, LightLdaBinPath, BinaryOutPath, TopicK, TestDoc
     TestDatapath, TestVocabLibsvmPath, TrainVocabPath
 import os
 import numpy as np
-
+# TODO:1.消去一些无用的词 2.消去标签 （做好数据处理） 2.想好模型训练的方法
 from processRrsultForLightLDA import LDAResult
 
 word_list = []
