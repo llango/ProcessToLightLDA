@@ -4,7 +4,7 @@ Time:2021
 本文件将输入的文件转化成libsvm文件的形式得到XXXX.libsvm和一个词典文件
 '''
 import jieba.posseg as psg
-from config import NOT_USE_fLAG, LightLdaBinPath, BinaryOutPath, TopicK, VocabNum, DocNum, TestDocWordLibsvmPath, \
+from config import NOT_USE_fLAG, LightLdaBinPath, BinaryOutPath, TopicK, VocabNum,  TestDocWordLibsvmPath, \
     TestDatapath, TestVocabLibsvmPath, TrainVocabPath
 import os
 import numpy as np
@@ -57,7 +57,7 @@ def write_docWord(docIndex, wordDict):
 def write_vocab(wordDict):
     '''
     输出一个词典每一行为"wordIndex 词 词频"
-    :param wordList:
+    :param wordList:分词后的token
     :return:
     '''
     f_vocab = open(TestVocabLibsvmPath, "w")
