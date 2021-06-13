@@ -1,5 +1,5 @@
 # 根据词性筛选词
-NOT_USE_fLAG = ['x', 'uj', 'd', 'ul', 'w', 'p', 'q', 'c', 'r', 'k', 'm', 'y', 'un', 't']
+NOT_USE_fLAG = ['x','xc', 'uj', 'd', 'ul', 'w', 'p', 'q', 'c', 'r', 'k', 'm', 'y', 'un', 't', "TIME"]
 # 去除标签
 WORD_LABEL = ["战略态势 外交舆论", "战略态势 政治", "战略态势 军事科技", "战略态势 经济金融"]
 
@@ -16,7 +16,7 @@ BinaryOutPath = "./model_block_path"
 # LightLDA BIN Files PATH
 LightLdaBinPath = './lightLDABin/'
 # TrainDataSet Vocab File
-TrainVocabPath = "./dataset/vocab.sougou.txt"
+TrainVocabPath = "dataset/vocab.military.txt"
 # super parameters
-TopicK = 378
+TopicK = 20
 

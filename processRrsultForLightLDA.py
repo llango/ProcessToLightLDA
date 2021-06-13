@@ -1,4 +1,6 @@
 import numpy as np
+import copy
+from config import TopicK
 
 
 class LDAResult(object):
@@ -13,6 +15,7 @@ class LDAResult(object):
         self._doc_num = doc_num
         self._doc_topic_mat = np.zeros((self._doc_num, self._topic_num))
         self._word_topic_mat = np.zeros((self._vocab_num, self._topic_num))
+        self.vocabs_list = []
 
     def LoadDocTopicModel(self, model_path):
         f = open(model_path, 'r')
@@ -56,6 +59,7 @@ class LDAResult(object):
                 self._word_topic_mat[word_index, topic_index] = topic_count
             read_data = f.readline()
         f.close()
+        self.origin_word_topic = copy.deepcopy(self._word_topic_mat)
         # 读入每个主题出现的总次数
         topic_cnt = []
         f = open(summary_path, 'r')
@@ -80,21 +84,20 @@ class LDAResult(object):
         return topic_nWordList
 
     def getVocabList(self, vocab_path):
-        f = open(vocab_path, 'r')
-        word_list = []
+        f = open(vocab_path, 'r', encoding='utf-8')
         read_data = f.readline()
         while read_data:
-            word_list.append(read_data.split('\n')[0])
+            self.vocabs_list.append(read_data.split('\n')[0])
             read_data = f.readline()
         f.close()
-        return word_list
+        return self.vocabs_list
 
-    def dumpTopicWord(self, vocab_path, output_path,topNum):
+    def dumpTopicWord(self, vocab_path, output_path, topNum):
         word_list = self.getVocabList(vocab_path)
         topic_nWordList = self.getTopicTopWordN(topNum)
         # topic_nWordList =[[1,2,3],[3,2,1],[50,7,99],[4,55,77]]
         print("writing....")
-        f = open(output_path, 'a')
+        f = open(output_path, 'a', encoding='utf-8')
         for i in range(len(topic_nWordList)):
             write_line = str(i) + "  "
             for j in range(len(topic_nWordList[i])):
@@ -103,18 +106,41 @@ class LDAResult(object):
             f.write(write_line + '\n')
         f.close()
 
+    def getTopicWord(self, vocab_path, topNum):
+        word_list = self.getVocabList(vocab_path)
+        topic_nWordList = self.getTopicTopWordN(topNum)
+        # topic_nWordList =[[1,2,3],[3,2,1],[50,7,99],[4,55,77]]
+        topic_TopWords = {}
+        for i in range(len(topic_nWordList)):
+            topic_TopWords[i] = []
+            for j in range(len(topic_nWordList[i])):
+                topic_TopWords[i].append(word_list[topic_nWordList[i][j]])
+        return topic_TopWords
+
+    def get_word_topic(self, query):
+        if len(self.vocabs_list) == 0:
+            return -1
+        if query in self.vocabs_list:
+            query_index = self.vocabs_list.index(query)
+            query_topic = self.origin_word_topic[query_index, :]
+            return np.argsort(query_topic)[-1]
+        else:
+            return -1
+
+
+
 
 if __name__ == '__main__':
     doc_topic_path = "millitaryNesResult/result_K_20_New2/doc_topic.0"
     topic_word_path = "millitaryNesResult/result_K_20_New2/server_0_table_0.model"
     topic_summary = "millitaryNesResult/result_K_20_New2/server_0_table_1.model"
-    ori_word_path = "./dataset/vocab.military.txt"
+    ori_word_path = "dataset/vocab.military.txt"
     output = "millitaryNesResult/result_K_20_New2/res_100.txt"
-    ldaResult = LDAResult(0.1, 0.01, 20, 4297, 1141)
+    ldaResult = LDAResult(0.1, 0.01, TopicK, 4297, 1141)
     # ldaResult.LoadDocTopicModel(doc_topic_path)
 
     print("Loading DocTopic finished!")
     ldaResult.LoadWordTopicModel(topic_word_path, topic_summary)
     print("Loading WordTopic finished!")
-    TopNum =100
+    TopNum = 100
     ldaResult.dumpTopicWord(ori_word_path, output, TopNum)

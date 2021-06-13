@@ -4,8 +4,8 @@ from config import NOT_USE_fLAG, WORD_LABEL
 import copy
 
 data_path = "./dataset/military_news.txt"
-out_path_docWord = "./dataset/docword.military.txt"
-out_path_vocab = "./dataset/vocab.military.txt"
+out_path_docWord = "./dataset/docword.millitaryNesResult.txt"
+out_path_vocab = "./dataset/vocab.millitaryNesResult.txt"
 StopWordsPath = "./docs/stopWords"
 
 title_pattern = re.compile("<contenttitle>(.*)</contenttitle>")
@@ -19,15 +19,17 @@ Doc_Word_Dict = {}
 # 存放所有文章的doc_dict
 Doc_Dict_List = []
 
+
 def read_stopWords(stopWordsPath=StopWordsPath):
-    f = open(stopWordsPath)
+    f = open(stopWordsPath, encoding='utf-8')
     stop_list = []
     line = f.readline().strip()
     while line:
         stop_list.append(line)
         line = f.readline().strip()
     f.close()
-    return stop_list
+    return set(stop_list)
+
 
 def statistics_to_dict(wordList):
     for word in wordList:
@@ -49,7 +51,7 @@ def statistics_to_dict(wordList):
 def write_docWord(docIndex, wordDict, f_docWord=None, delList=None):
     for key in wordDict.keys():
         if key not in delList:
-            line = str(docIndex) + " " + str(Word_List.index(key)+1) + " " + str(wordDict[key])
+            line = str(docIndex) + " " + str(Word_List.index(key) + 1) + " " + str(wordDict[key])
             f_docWord.write(line + '\n')
 
 
@@ -75,13 +77,14 @@ def write_vocab_docWord(min_frequency):
     print("删除后个数：" + str(len(Word_List)))
     f = open(out_path_docWord, 'w')
     for doc_index, doc_dict in enumerate(Doc_Dict_List):
-        write_docWord(doc_index+1, doc_dict, f, del_word)
+        write_docWord(doc_index + 1, doc_dict, f, del_word)
     f.close()
 
     f = open(out_path_vocab, 'w')
     for word in Word_List:
         f.write(word + '\n')
     f.close()
+
 
 def preSoGouNews():
     with open(data_path) as f:
