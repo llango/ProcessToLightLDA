@@ -1,5 +1,8 @@
 # 根据词性筛选词
 NOT_USE_fLAG = ['x', 'uj', 'd', 'ul', 'w', 'p', 'q', 'c', 'r', 'k', 'm', 'y', 'un', 't']
+# 去除标签
+WORD_LABEL = ["战略态势 外交舆论", "战略态势 政治", "战略态势 军事科技", "战略态势 经济金融"]
+
 
 # Test Doc Path
 TestDatapath = "./new_text.txt"
@@ -7,7 +10,7 @@ TestDatapath = "./new_text.txt"
 TestDocWordLibsvmPath = "./test_Out/docword.libsvm"
 TestVocabLibsvmPath = "./test_Out/vocab.word_id.dict"
 # 训练好的模型文件以及dump_binary(LightLDA Block) out path
-BinaryOutPath = "/home/yxb/MyCoding/LightLDA/example/data/text_data/"
+BinaryOutPath = "./model_block_path"
 
 
 # LightLDA BIN Files PATH
@@ -16,5 +19,4 @@ LightLdaBinPath = './lightLDABin/'
 TrainVocabPath = "./dataset/vocab.sougou.txt"
 # super parameters
 TopicK = 378
-VocabNum = 822343
 

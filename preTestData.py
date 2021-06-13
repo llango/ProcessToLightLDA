@@ -4,13 +4,12 @@ Time:2021
 本文件将输入的文件转化成libsvm文件的形式得到XXXX.libsvm和一个词典文件
 '''
 import jieba.posseg as psg
-from config import NOT_USE_fLAG, LightLdaBinPath, BinaryOutPath, TopicK, VocabNum,  TestDocWordLibsvmPath, \
+from config import NOT_USE_fLAG, LightLdaBinPath, BinaryOutPath, TopicK, TestDocWordLibsvmPath, \
     TestDatapath, TestVocabLibsvmPath, TrainVocabPath
 import os
 import numpy as np
-
+# TODO:1.消去一些无用的词 2.消去标签 （做好数据处理） 2.想好模型训练的方法
 from processRrsultForLightLDA import LDAResult
-
 
 word_list = []
 # key:count count is in all doc
@@ -57,7 +56,7 @@ def write_docWord(docIndex, wordDict):
 def write_vocab(wordDict):
     '''
     输出一个词典每一行为"wordIndex 词 词频"
-    :param wordList:分词后的token
+    :param wordList:
     :return:
     '''
     f_vocab = open(TestVocabLibsvmPath, "w")
@@ -103,15 +102,15 @@ def transforLIBSVM():
             read_data = f.readline().strip()
         f.close()
 
-    print(doc_index-1)
     print(len(word_list))
     write_vocab(word_dict)
-    return doc_index-1
+    return doc_index, len(word_list)
+
 
 def libsvmTOBinary(exePath, outdir, numblocks=0):
     a = os.system('{dumpBinaryPath} {libsvmPath}   {libsvmVocabPath} {outDir} {blockNum}'.format(dumpBinaryPath=exePath,
                                                                                                  libsvmPath=TestDocWordLibsvmPath,
-                                                                                                 libsvmVocabPath='./dataset/sougou.word_id.dict',
+                                                                                                 libsvmVocabPath='./docs/sougou.word_id.dict',
                                                                                                  outDir=outdir,
                                                                                                  blockNum=numblocks))
     return a
@@ -119,9 +118,10 @@ def libsvmTOBinary(exePath, outdir, numblocks=0):
 
 def inferByLightLDA(infer_path, block_path, topic_num=378):
     a = os.system(
-        '{inferPath}  -num_vocabs 822343  -num_topics {K} -num_iterations 100 -alpha 0.1 -beta 0.01 -mh_steps 2 -num_local_workers 1 -num_blocks 1 -max_num_document 1300000 -input_dir {blockPath}  -data_capacity 8000'.format(
-            inferPath=infer_path, blockPath=block_path, K=topic_num))
+        '{inferPath}  -num_vocabs {num_vocabs}  -num_topics {K} -num_iterations 100 -alpha 0.1 -beta 0.01 -mh_steps 2 -num_local_workers 1 -num_blocks 1 -max_num_document 1300000 -input_dir {blockPath}  -data_capacity 8000'.format(
+            inferPath=infer_path, blockPath=block_path, K=topic_num, num_vocabs=VocabNum))
     return a
+
 
 def getTop5(outputs):
     outputs = np.argsort(outputs).tolist()
@@ -131,10 +131,10 @@ def getTop5(outputs):
     res = [l[::-1] for l in res]
     return res
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     # 将输入转成libsvm格式
-    docNum = transforLIBSVM()
+    docNum, VocabNum = transforLIBSVM()
     # libsvm转成LightLDA 的block
     libsvmTOBinary(LightLdaBinPath + 'dump_binary', BinaryOutPath)
     # 推理
