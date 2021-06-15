@@ -127,7 +127,32 @@ class LDAResult(object):
         else:
             return -1
 
+    def cos_sim(self, x, y):
+        """
+        calulate two doc x and y 's cosine similarity
+        :param x:doc x's index
+        :param y:doc y's index
+        :return:cosine similarity
+        """
+        x_topic = self._doc_topic_mat[x, :]
+        y_topic = self._doc_topic_mat[y, :]
+        return np.dot(x_topic, y_topic) / np.linalg.norm(x_topic) * np.linalg.norm(y_topic)
 
+    def get_max_sim(self, x):
+        """
+        calulate for x search max similarity doc y
+        :param x:query
+        :return:the max sim index
+        """
+        index = -1
+        max_value = -1.0
+        for i in range(self._doc_num):
+            if i != x:
+                sim = self.cos_sim(x,i)
+                if sim > max_value:
+                    max_value = sim
+                    index = i
+        return index
 
 
 if __name__ == '__main__':

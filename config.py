@@ -11,12 +11,14 @@ TestDocWordLibsvmPath = "./test_Out/docword.libsvm"
 TestVocabLibsvmPath = "./test_Out/vocab.word_id.dict"
 # 训练好的模型文件以及dump_binary(LightLDA Block) out path
 BinaryOutPath = "./model_block_path"
+LibSvmVocabPath = "docs/millitary.word_id.dict"
+
 
 
 # LightLDA BIN Files PATH
 LightLdaBinPath = './lightLDABin/'
 # TrainDataSet Vocab File
-TrainVocabPath = "dataset/vocab.military.txt"
+TrainVocabPath = "dataset/vocab.millitaryNesResult.txt"
 # super parameters
 TopicK = 20
 
