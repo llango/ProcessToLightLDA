@@ -1,4 +1,5 @@
 from LAC import LAC
+import jieba.analyse as analyse
 from processRrsultForLightLDA import LDAResult
 from config import BinaryOutPath, NOT_USE_fLAG, TrainVocabPath, TopicK
 from preSougouNewsAll import read_stopWords
@@ -13,10 +14,22 @@ def get_token_list(context, stopWords=None):
     token_list = [x[0] for x in result if x[1] not in NOT_USE_fLAG and x[2] > 1]
     # del stopWords and len(word)==1
     token_list = [word for word in token_list if word not in stopWords and len(word) > 1]
+    print(len(token_list))
     return token_list
 
 
-def extracdoc_word_topic(word_list, lda_result, topics_word_set):
+def get_token_list_jieba(context, stopWords=None):
+    result = analyse.extract_tags(context, topK=70, withWeight=True, allowPOS=())
+    # filter by part of speech and importance
+    below_weight = result[len(result)//2][1]/1.5
+    # print(below_weight)
+    result = [word for word, weight in result if weight > below_weight]
+    # del stopWords and len(word)==1
+    token_list = [word for word in result if word not in stopWords and len(word) > 1]
+    return token_list
+
+
+def extract_doc_word_topic(word_list, lda_result, topics_word_set):
     words_topic = {}
     for word in word_list:
         topic_index = lda_result.get_word_topic(word)
@@ -41,8 +54,8 @@ def run(test_path, stop_list, vob_num=4297, doc_num=1141, K=TopicK, model_path=B
     docs_word_topic_set = set(list_tmp)
     docs_result = []
     for line in open(test_path, 'r', encoding='utf-8'):
-        im_world_list = get_token_list(line, stop_list)
-        result = extracdoc_word_topic(im_world_list, lda_result, docs_word_topic_set)
+        im_world_list = get_token_list_jieba(line, stop_list)
+        result = extract_doc_word_topic(im_world_list, lda_result, docs_word_topic_set)
         print(result)
     docs_result.append(result)
     return docs_result
