@@ -1,6 +1,6 @@
 import numpy as np
 import copy
-from config import TopicK
+from ModelApi.LightLdaUtil.config import TopicK
 
 
 class LDAResult(object):
@@ -148,11 +148,18 @@ class LDAResult(object):
         max_value = -1.0
         for i in range(self._doc_num):
             if i != x:
-                sim = self.cos_sim(x,i)
+                sim = self.cos_sim(x, i)
                 if sim > max_value:
                     max_value = sim
                     index = i
         return index
+
+    def get_sim_matrix(self):
+        num = np.dot(self._doc_topic_mat, self._doc_topic_mat.T)
+        denom = np.linalg.norm(self._doc_topic_mat, axis=1).reshape(-1, 1) * np.linalg.norm(self._doc_topic_mat, axis=1)
+        res = num / denom
+        res[np.isneginf(res)] = 0
+        return 0.5 + 0.5 * res
 
 
 if __name__ == '__main__':
