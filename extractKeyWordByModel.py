@@ -1,21 +1,21 @@
-from LAC import LAC
+# from LAC import LAC
 import jieba.analyse as analyse
 from processRrsultForLightLDA import LDAResult
 from config import BinaryOutPath, NOT_USE_fLAG, TrainVocabPath, TopicK
 from text2uci import read_stopWords
 
 
-def get_token_list(context, stopWords=None):
-    # token_list = list(psg.cut(context))
-    lac = LAC(mode='rank')
-    result = lac.run(context)
-    result = list(zip(result[0], result[1], result[2]))
-    # filter by part of speech and importance
-    token_list = [x[0] for x in result if x[1] not in NOT_USE_fLAG and x[2] > 1]
-    # del stopWords and len(word)==1
-    token_list = [word for word in token_list if word not in stopWords and len(word) > 1]
-    print(len(token_list))
-    return token_list
+# def get_token_list(context, stopWords=None):
+#     # token_list = list(psg.cut(context))
+#     lac = LAC(mode='rank')
+#     result = lac.run(context)
+#     result = list(zip(result[0], result[1], result[2]))
+#     # filter by part of speech and importance
+#     token_list = [x[0] for x in result if x[1] not in NOT_USE_fLAG and x[2] > 1]
+#     # del stopWords and len(word)==1
+#     token_list = [word for word in token_list if word not in stopWords and len(word) > 1]
+#     print(len(token_list))
+#     return token_list
 
 
 def get_token_list_jieba(context, stopWords=None):
@@ -57,7 +57,7 @@ def run(test_path, stop_list, vob_num=4297, doc_num=1141, K=TopicK, model_path=B
         im_world_list = get_token_list_jieba(line, stop_list)
         result = extract_doc_word_topic(im_world_list, lda_result, docs_word_topic_set)
         print(result)
-    docs_result.append(result)
+        docs_result.append(result)
     return docs_result
 
 

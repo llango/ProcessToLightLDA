@@ -85,7 +85,6 @@ def transforLIBSVM():
     # 获取全局词典
     read_dict(TrainVocabPath)
     # 读取停用词
-
     with open(TestDatapath) as f:
         # 文章的数目,从1开始计数
         doc_index = 0
