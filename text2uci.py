@@ -2,7 +2,7 @@
 本文件封装了 将原始数据集(每一行为一篇文章)
 转化成UCI格式的数据集
 """
-import jieba.posseg as psg
+#import jieba.posseg as psg
 import re
 from config import NOT_USE_fLAG, WORD_LABEL
 import copy
