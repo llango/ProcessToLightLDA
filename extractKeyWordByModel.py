@@ -2,7 +2,7 @@
 import jieba.analyse as analyse
 from processRrsultForLightLDA import LDAResult
 from config import BinaryOutPath, NOT_USE_fLAG, TrainVocabPath, TopicK
-from preSougouNewsAll import read_stopWords
+from text2uci import read_stopWords
 
 
 # def get_token_list(context, stopWords=None):
