@@ -1,9 +1,10 @@
-'''
+# -*- coding:utf-8 -*-
+"""
 Author:YXB
 Time:2021
 本文件将输入的文件（格式为每一行是一篇文章）
 转化成libsvm文件的形式得到XXXX.libsvm和一个词典文件
-'''
+"""
 import jieba.posseg as psg
 from config import NOT_USE_fLAG, LightLdaBinPath, BinaryOutPath, TopicK, TestDocWordLibsvmPath, \
     TestDatapath, TestVocabLibsvmPath, TrainVocabPath, LibSvmVocabPath
@@ -28,8 +29,9 @@ def statistics_to_dict(tokenList):
     for word in tokenList:
         # 全局的字典
         if word not in word_list:
-            print(word)
+            # print(word)
             # word_list.append(word)
+            pass
         # 文章字典
         if word not in doc_word_dict.keys() and word in word_list:
             doc_word_dict[word] = tokenList.count(word)
@@ -68,11 +70,11 @@ def write_vocab(wordDict):
 
 
 def read_dict(dict_path):
-    '''
+    """
     将词典读入变成list
     :param dict_path: 词典路径
     :return:
-    '''
+    """
     f_dict = open(dict_path)
     line = f_dict.readline().strip()
     while line:
@@ -109,6 +111,7 @@ def transforLIBSVM():
 
 
 def libsvmTOBinary(exePath, outdir, numblocks=0):
+    # LibSvmVocabPath 这里使用的libsvm的词典 是训练集的词典
     a = os.system('{dumpBinaryPath} {libsvmPath}   {libsvmVocabPath} {outDir} {blockNum}'.format(dumpBinaryPath=exePath,
                                                                                                  libsvmPath=TestDocWordLibsvmPath,
                                                                                                  libsvmVocabPath=LibSvmVocabPath,
@@ -117,11 +120,11 @@ def libsvmTOBinary(exePath, outdir, numblocks=0):
     return a
 
 
-def inferByLightLDA(infer_path, block_path, vocab_num, topic_num=378):
+def inferByLightLDA(infer_path, block_path, vocab_num, num_blocks=1, topic_num=378):
     # num_vocabs为训练集的单词
     a = os.system(
-        '{inferPath}  -num_vocabs {num_vocabs}  -num_topics {K} -num_iterations 100 -alpha 0.1 -beta 0.01 -mh_steps 2 -num_local_workers 1 -num_blocks 1 -max_num_document 1300000 -input_dir {blockPath}  -data_capacity 8000'.format(
-            inferPath=infer_path, blockPath=block_path, K=topic_num, num_vocabs=vocab_num))
+        '{inferPath}  -num_vocabs {num_vocabs}  -num_topics {K} -num_iterations 100 -alpha 0.1 -beta 0.01 -mh_steps 2 -num_local_workers 1 -num_blocks {num_blocks} -max_num_document 1300000 -input_dir {blockPath}  -data_capacity 8000'.format(
+            inferPath=infer_path, blockPath=block_path, K=topic_num, num_vocabs=vocab_num, num_blocks=num_blocks))
     return a
 
 
@@ -139,12 +142,13 @@ if __name__ == '__main__':
     docNum, vocab_num = transforLIBSVM()
 
     # libsvm转成LightLDA 的block
-    libsvmTOBinary(LightLdaBinPath + 'dump_binary', BinaryOutPath)
+    # libsvmTOBinary(LightLdaBinPath + 'dump_binary', BinaryOutPath)
     # 推理
-    inferByLightLDA(LightLdaBinPath + "infer", BinaryOutPath, vocab_num=vocab_num, topic_num=TopicK)
-    doc_topic_path = "./doc_topic.0"
-    ldaResult = LDAResult(0.1, 0.01, TopicK, vocab_num, docNum)
-    result = ldaResult.LoadDocTopicModel(doc_topic_path)
-    for i in range(docNum):
-        print(ldaResult.get_max_sim(i))
-    print(getTop5(result))
+    inferByLightLDA(LightLdaBinPath + "infer", BinaryOutPath, vocab_num=vocab_num, topic_num=TopicK, num_blocks=4)
+
+    # doc_topic_path = "./doc_topic.0"
+    # ldaResult = LDAResult(0.1, 0.01, TopicK, vocab_num, docNum)
+    # result = ldaResult.LoadDocTopicModel(doc_topic_path)
+    # for i in range(docNum):
+    #     print(ldaResult.get_max_sim(i))
+    # print(getTop5(result))
