@@ -78,14 +78,21 @@ class LDAResult(object):
 
         self.origin_word_topic = copy.deepcopy(self._word_topic_mat)
         # 读入每个主题出现的总次数
-        f = open(summary_path, 'r')
-        read_data = f.readline()
-        summary_info = read_data.split()
-        for i in range(1, len(summary_info)):
-            _, topic_count = tuple(summary_info[i].split(':'))
-            topic_count = int(topic_count)
-            self.topic_cnt.append(topic_count)
-        f.close()
+        model_summary_path_list = []
+        for index in range(server_nums):
+            single_model_summary = os.path.join(model_dir, 'server_{}_table_1.model'.format(index))
+            model_summary_path_list.append(single_model_summary)
+
+        for summary_path in model_summary_path_list:
+            f = open(summary_path, 'r')
+            read_data = f.readline()
+            summary_info = read_data.split()
+            for i in range(1, len(summary_info)):
+                _, topic_count = tuple(summary_info[i].split(':'))
+                topic_count = int(topic_count)
+                self.topic_cnt.append(topic_count)
+            f.close()
+        # 计算概率
         self.count_word_topic_p()
 
     def count_word_topic_p(self):

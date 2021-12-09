@@ -146,9 +146,9 @@ if __name__ == '__main__':
     # 推理
     inferByLightLDA(LightLdaBinPath + "infer", BinaryOutPath, vocab_num=vocab_num, topic_num=TopicK, num_blocks=4)
 
-    # doc_topic_path = "./doc_topic.0"
-    # ldaResult = LDAResult(0.1, 0.01, TopicK, vocab_num, docNum)
-    # result = ldaResult.LoadDocTopicModel(doc_topic_path)
-    # for i in range(docNum):
-    #     print(ldaResult.get_max_sim(i))
-    # print(getTop5(result))
+    doc_topic_path = "./doc_topic.0"
+    ldaResult = LDAResult(0.1, 0.01, TopicK, vocab_num, docNum)
+    result = ldaResult.LoadDocTopicModel(doc_topic_path)
+    for i in range(docNum):
+        print(ldaResult.get_max_sim(i))
+    print(getTop5(result))
